@@ -24,8 +24,7 @@ public class Banco {
         @Override
         public void run() {
             try {
-                // Simula o tempo de atendimento
-                Thread.sleep(tempoAtt * 1000); // Converte o tempoAtt de segundos para milissegundos
+                Thread.sleep(tempoAtt * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -44,14 +43,12 @@ public class Banco {
         Random random = new Random();
         List<Cliente> clientes = new ArrayList<>();
 
-        // Simula a chegada de clientes
         int currentTime = horaComeco;
         while (currentTime <= horaFim) {
             if (random.nextDouble() < 0.5) {
                 int tempoChega = currentTime;
                 int tempoAtt = tempoMinServ + random.nextInt(tempoMaxServ - tempoMinServ + 1);
 
-                // Adiciona cliente de forma sincronizada
                 synchronized (clientes) {
                     Cliente cliente = new Cliente(tempoChega, tempoAtt);
                     clientes.add(cliente);
@@ -61,28 +58,24 @@ public class Banco {
             currentTime += intervaloMain + random.nextInt(intervaloMax - intervaloMain + 1);
         }
 
-        // Inicia o atendimento dos clientes
         for (Cliente cliente : clientes) {
-            cliente.start(); // Inicia a thread para cada cliente
+            cliente.start();
         }
 
-        // Espera que todos os clientes sejam atendidos
         for (Cliente cliente : clientes) {
             try {
-                cliente.join(); // Aguarda a finalização do atendimento de cada cliente
+                cliente.join(); 
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
-        // Estatísticas
         int totalClientes;
         int tempoEspMax = 0;
         int maxTempServ = 0;
         int tempoTotalEsper = 0;
         int tempoTotalServ = 0;
 
-        // Leitura da lista de clientes de forma sincronizada
         synchronized (clientes) {
             totalClientes = clientes.size();
 
@@ -99,7 +92,6 @@ public class Banco {
         double tempoMedioNoBanco = (double) (tempoTotalEsper + tempoTotalServ) / totalClientes;
         double tempoEspMedio = (double) tempoTotalEsper / totalClientes;
 
-        // Imprime as estatísticas
         System.out.println("Número de clientes atendidos: " + totalClientes);
         System.out.println("Tempo máximo de espera: " + tempoEspMax + " segundos");
         System.out.println("Tempo máximo de atendimento: " + maxTempServ + " segundos");
